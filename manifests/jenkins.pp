@@ -3,24 +3,25 @@
 class jenkins {
     include apt
 
-    apt::key {
-      'D50582E6':
-        source => 'http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key',
+    apt::key { 'jenkins':
+      key        => 'D50582E6',
+      key_source => 'http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key',
     }
 
-    apt::sources_list {
+    apt::source {
       'jenkins':
-        ensure  => present,
-        # content => 'deb http://pkg.jenkins-ci.org/debian-stable binary/',
-        # The above gives you the LTS release. Use the below repo to get the very latest
-        content => 'deb http://pkg.jenkins-ci.org/debian binary/',
-        require => Apt::Key['D50582E6'],
+        location   => 'http://pkg.jenkins-ci.org/debian binary/',
+        release    => '',
+        repos      => '',
+        key        => 'D50582E6',
+        key_server => 'pgp.mit.edu',
+        include_src => false
     }
 
     package {
       'jenkins':
         ensure  => installed,
-        require => Apt::Sources_list['jenkins'],
+        require => Apt::Source['jenkins'],
     }
 
     service {
